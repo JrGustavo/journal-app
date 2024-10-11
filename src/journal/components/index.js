@@ -1,3 +1,5 @@
 
 
-export * from "./NavBar.jsx"
+export * from "./NavBar"
+export * from "./SideBar"
+export * from "./ImageGallery"
