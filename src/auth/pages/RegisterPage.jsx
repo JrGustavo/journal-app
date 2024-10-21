@@ -1,9 +1,17 @@
 import {Button, Grid, TextField, Typography} from "@mui/material";
-import {Google} from "@mui/icons-material";
 import {Link, Link as RouterLink} from "react-router-dom";
 import {AuthLayout} from "../layout/AuthLayout";
+import {useForm} from "../../hooks";
 
 export const RegisterPage = () => {
+
+    const {displayName,  email, password, onInputChange}  = useForm({
+        email: 'joe@google.com',
+        password: '123456'
+    })
+
+
+
     return (
 
         <AuthLayout title="Crear cuenta">
