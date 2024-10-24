@@ -1,5 +1,2 @@
-
-
-export * from "./AppTheme.jsx"
-export * from "./purpleTheme.js"
-
+export * from './AppTheme';
+export * from './purpleTheme';

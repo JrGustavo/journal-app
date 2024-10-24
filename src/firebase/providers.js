@@ -1,74 +1,96 @@
-import {GoogleAuthProvider, signInWithPopup} from "firebase/auth"
-import {FirebaseAuth} from "./config.js";
-import {signInWithEmailAndPassword} from 'firebase/auth';
+import {
+    signInWithEmailAndPassword,
+    createUserWithEmailAndPassword,
+    GoogleAuthProvider,
+    signInWithPopup,
+    updateProfile
+} from 'firebase/auth';
+import { FirebaseAuth } from './config';
 
-const googleProvider = new GoogleAuthProvider()
+// Configuración del proveedor de Google
+const googleProvider = new GoogleAuthProvider();
 
-
-export const singInWithGoogle = async() => {
+// Iniciar sesión con Google
+export const signInWithGoogle = async () => {
     try {
-
-        const result = await  signInWithPopup(FirebaseAuth, googleProvider)
-        const {displayName, email, photoURL, uid} = result.user
-
-        return {
-            ok:true,
-            // User info
-            displayName, email, photoURL, uid
-        }
+        const result = await signInWithPopup(FirebaseAuth, googleProvider);
+        const { displayName, email, photoURL, uid } = result.user;
 
         return {
             ok: true,
-            uid, photoURL, email, displayName
-        }
-
+            // Información del usuario
+            displayName,
+            email,
+            photoURL,
+            uid
+        };
     } catch (error) {
-
-        const errorCode = error.code
-        const errorMessage = error.message
-
+        const errorMessage = error.message || 'Error al iniciar sesión con Google';
 
         return {
             ok: false,
-            errorMessage,
-
-        }
-
+            errorMessage
+        };
     }
-}
+};
 
-export const registerUserWithEmailPassword = async ({email, password, displayName}) => {
+// Registro de usuario con email y contraseña
+export const registerUserWithEmailPassword = async ({ email, password, displayName }) => {
     try {
-        console.log({email, password, displayName})
-        const resp = await createUserWithEmailAndPassword(FirebaseAuth, email, password)
-        const {uid, photoURL} = resp.user;
+        const resp = await createUserWithEmailAndPassword(FirebaseAuth, email, password);
+        const { uid, photoURL } = resp.user;
 
-        await updateProfile(FirebaseAuth.currentUser, {displayName})
-
-
-
-    } catch (error) {
-        console.log(error)
-        return {ok: false, errorMessage: error.message}
-    }
-
-}
-
-export const loginWithEmailPassword = async ({email, password}) => {
-
-
-    try {
-        const resp = await signInWithEmailAndPassword(FirebaseAuth, email, password)
-        const {uid, photoURL} = resp.user;
+        // Actualizar el perfil del usuario registrado
+        await updateProfile(FirebaseAuth.currentUser, { displayName });
 
         return {
             ok: true,
-            uid, photoURL, email, displayName
-        }
-
+            uid,
+            photoURL,
+            email,
+            displayName
+        };
     } catch (error) {
-
-        return {ok: false, errorMessage: error.message}
+        const errorMessage = error.message || 'Error al registrar el usuario';
+        console.error(errorMessage);
+        return {
+            ok: false,
+            errorMessage
+        };
     }
+};
 
-}
+// Iniciar sesión con email y contraseña
+export const loginWithEmailPassword = async ({ email, password }) => {
+    try {
+        const resp = await signInWithEmailAndPassword(FirebaseAuth, email, password);
+        const { uid, photoURL, displayName } = resp.user;
+
+        return {
+            ok: true,
+            uid,
+            photoURL,
+            displayName
+        };
+    } catch (error) {
+        const errorMessage = error.message || 'Error al iniciar sesión con email y contraseña';
+        return {
+            ok: false,
+            errorMessage
+        };
+    }
+};
+
+// Cerrar sesión en Firebase
+export const logoutFirebase = async () => {
+    try {
+        await FirebaseAuth.signOut();
+        return { ok: true };
+    } catch (error) {
+        const errorMessage = error.message || 'Error al cerrar sesión';
+        return {
+            ok: false,
+            errorMessage
+        };
+    }
+};

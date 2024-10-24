@@ -1,4 +1,3 @@
 
 
-export * from './components/CheckingAuth.jsx'
-
+export * from './components/CheckingAuth';
